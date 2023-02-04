@@ -8,7 +8,7 @@ public class Finans {
     private static Calendar currentDate = Calendar.getInstance();
     private static byte updateDay = 25;
     private static String path = "F:\\Документы\\Finans\\fin.txt";
-    private static int salary = 5000;
+    //private static int salary = 5000;
 
     static void update() {
         try (FileReader reader = new FileReader(path)) {
@@ -88,8 +88,15 @@ public class Finans {
     }
 
     private static void add() {
-        sum += salary * 0.1 >= 1000 ? salary * 0.1 : 1000;
-        isUpdate = true;
+        try (Scanner sc = new Scanner(System.in)){
+            System.out.println("Введите зп за месяц");
+            double salary = Double.parseDouble(sc.nextLine().trim());
+            sum += salary * 0.1 >= 1000 ? salary * 0.1 : 1000;
+            isUpdate = true;
+        }
+        catch (NumberFormatException e) {
+            System.out.println(e + "\nВведено неверное значение");
+        }
     }
 
     private static void clear() {
