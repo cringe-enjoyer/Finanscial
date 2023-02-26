@@ -7,9 +7,7 @@ public class Main {
             byte option = Byte.parseByte(scanner.next().trim());
             switch (option) {
                 case 1 -> Finans.show();
-                case 2 -> {
-                    Finans.update();
-                }
+                case 2 -> Finans.update();
                 default -> {
                     scanner.close();
                     System.exit(0);

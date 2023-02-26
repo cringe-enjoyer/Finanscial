@@ -1,14 +1,15 @@
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
 
 public class Finans {
     private static double sum;
-    private static boolean isUpdate = false;
     private static Calendar currentDate = Calendar.getInstance();
-    private static byte updateDay = 25;
+    private static Calendar updateDay;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     private static String path = "F:\\Документы\\Finans\\fin.txt";
-    //private static int salary = 5000;
 
     static void update() {
         try (FileReader reader = new FileReader(path)) {
@@ -21,26 +22,26 @@ public class Finans {
                 System.out.println("Введите остаток");
                 sum = Double.parseDouble(sr.nextLine());
                 sr.close();
+                updateDay = currentDate;
+                updateDay.add(Calendar.DAY_OF_MONTH, -1);
                 rewrite();
+                System.out.println("Остаток: " + sum);
                 return;
             }
-            var tmp = str.toString().split(" ");
+            String[] tmp = str.toString().split(" ");
             sum = Double.parseDouble(tmp[0]);
-            isUpdate = tmp[1].equals("1");
-            if (currentDate.get(Calendar.DAY_OF_MONTH) >= updateDay && !isUpdate) {
+            updateDay = parseDate(tmp[1].trim());
+            if (currentDate.after(updateDay)) {
                 add();
-                isUpdate = true;
-                rewrite();
-            }
-            if (!isUpdate) {
-                add();
-                isUpdate = true;
                 rewrite();
             }
             System.out.println("Остаток: " + sum);
         } catch (FileNotFoundException e) {
             System.out.println("File is not found");
             throw new RuntimeException(e);
+        } catch (ParseException parseException) {
+            System.out.println("Date parse fail " + parseException);
+            throw new RuntimeException(parseException);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (NumberFormatException e) {
@@ -55,33 +56,45 @@ public class Finans {
             StringBuilder str = new StringBuilder();
             while ((i = reader.read()) != -1)
                 str.append((char) i);
-            var tmp = str.toString().split(" ");
-            sum = Double.parseDouble(tmp[0]);
-            isUpdate = tmp[1].equals("1");
-            if (isUpdate)
-                System.out.println("Остаток: " + sum);
+            if (str.isEmpty())
+                askUpdate();
             else {
-                try (Scanner scanner = new Scanner(System.in)) {
-                    System.out.println("Остаток не обновлялся в этом месяце, обновить?\nY/N");
-                    switch (scanner.next().trim()) {
-                        case "Y" -> update();
-                        case "N" -> System.out.println("Остаток: " + sum);
-                    }
-                }
+                var tmp = str.toString().split(" ");
+                sum = Double.parseDouble(tmp[0]);
+                if (currentDate.before(updateDay))
+                    System.out.println("Остаток: " + sum);
+                else
+                    askUpdate();
             }
         } catch (Exception e) {
             System.out.println(e);
         }
     }
 
+    private static void askUpdate() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Остаток не обновлялся в этом месяце, обновить?\nY/N");
+            switch (scanner.next().trim()) {
+                case "Y" -> update();
+                case "N" -> System.out.println("Остаток: " + sum);
+            }
+        }
+    }
+
+    private static Calendar parseDate(String strDate) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(sdf.parse(strDate));
+        return calendar;
+    }
+
     private static void rewrite() {
         clear();
         try (FileWriter writer = new FileWriter(path, false)) {
             // Записать новую sum в файл и через пробел добавить 0 (если сумма не обновлялась в этом месяце)
-            // или 1 (если сумма обновлялась)
+            // или 1 (если сумма обновлялась) и дату следующего обновления
             writer.write(Double.toString(sum));
             writer.write(' ');
-            writer.write(isUpdate ? '1' : '0');
+            writer.write(sdf.format(updateDay.getTime()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +105,12 @@ public class Finans {
             System.out.println("Введите зп за месяц");
             double salary = Double.parseDouble(sc.nextLine().trim());
             sum += salary * 0.1 >= 1000 ? salary * 0.1 : 1000;
-            isUpdate = true;
+            updateDay.add(Calendar.MONTH, 1);
+            updateDay.set(Calendar.DAY_OF_MONTH, 25);
+            if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+                updateDay.add(Calendar.DAY_OF_MONTH, -1);
+            else if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+                updateDay.add(Calendar.DAY_OF_MONTH, -2);
         }
         catch (NumberFormatException e) {
             System.out.println(e + "\nВведено неверное значение");
