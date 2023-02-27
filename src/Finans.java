@@ -61,6 +61,8 @@ public class Finans {
             else {
                 var tmp = str.toString().split(" ");
                 sum = Double.parseDouble(tmp[0]);
+                updateDay = Calendar.getInstance();
+                updateDay.setTime(sdf.parse(tmp[1]));
                 if (currentDate.before(updateDay))
                     System.out.println("Остаток: " + sum);
                 else
