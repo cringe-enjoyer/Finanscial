@@ -14,7 +14,7 @@ import org.controlsfx.dialog.ExceptionDialog;
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class FirstLaunch {
+public class FirstLaunchController {
     private static final String regexNum = "\\d+[.|,]*\\d*";
     private static final String regexDate = "\\d{1,2}";
     private static final String PATH = "/data.txt";
