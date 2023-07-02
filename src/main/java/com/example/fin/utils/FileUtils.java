@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class FileUtils {
-    public static final String PATH = setPath();
+    public static final String PATH = setPath(); // Может можно как-то улучшить
 
     /**
      * Returns true if file is empty

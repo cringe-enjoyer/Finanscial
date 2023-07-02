@@ -1,33 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fin.MainController">
-    <padding>
-        <Insets bottom="20.0" />
-    </padding>
-   <MenuBar>
-     <menus>
-       <Menu mnemonicParsing="false" text="File">
-         <items>
-           <MenuItem mnemonicParsing="false" text="Close" />
-         </items>
-       </Menu>
-       <Menu mnemonicParsing="false" text="Edit">
-         <items>
-           <MenuItem mnemonicParsing="false" text="Delete" />
-         </items>
-       </Menu>
-       <Menu mnemonicParsing="false" text="Help">
-         <items>
-           <MenuItem mnemonicParsing="false" text="About" />
-         </items>
-       </Menu>
-     </menus>
-   </MenuBar>
-
-                <Label fx:id="welcomeText" />
-    <Button onAction="#onHelloButtonClick" text="Hello!" />
-</VBox>
+<AnchorPane prefHeight="415.0" prefWidth="536.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fin.controllers.MainController">
+   <children>
+       <Label fx:id="pillowResultText" alignment="TOP_CENTER" layoutX="234.0" layoutY="181.0" prefHeight="27.0" prefWidth="80.0" textAlignment="CENTER">
+         <font>
+            <Font name="SansSerif Regular" size="24.0" />
+         </font></Label>
+       <Button fx:id="reloadBtn" alignment="TOP_CENTER" layoutX="233.0" layoutY="208.0" onAction="#onReloadButtonClick" text="Обновить">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font></Button>
+   </children>
+</AnchorPane>
