@@ -1,11 +1,14 @@
 package com.example.fin.utils;
 
+import com.example.fin.MainApplication;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 
 public class FileUtils {
-    public static final String PATH = "/data.txt";
+    public static final String PATH = setPath();
 
     /**
      * Returns true if file is empty
@@ -19,9 +22,21 @@ public class FileUtils {
                 if (reader.readAllBytes().length > 0)
                     return false;
             } catch (IOException ex) {
-
+                System.out.println("isEmpty " + ex.getMessage());
             }
         }
         return true;
+    }
+
+    /**
+     * Sets path to user's data
+     * @return path to file with user's data
+     */
+    private static String setPath() {
+        URL path = MainApplication.class.getResource("saveData/data.txt");
+        if (path == null) {
+            return "data.txt";
+        }
+        return path.getFile();
     }
 }
