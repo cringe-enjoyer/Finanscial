@@ -1,5 +1,7 @@
 package com.example.fin;
 
+import com.example.fin.utils.FileUtils;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,32 +16,33 @@ public class Finans {
      */
     private static Calendar updateDay;
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    private static String path = "F:\\Документы\\Finans\\fin.txt";
+    //private static final String path = "/data.txt"; //"F:\\Документы\\Finans\\fin.txt";
     // TODO: 27.02.2023 Пересмотреть вывод информации, может что-то изменить или улучшить?
+
+    private static double percent;
+    private static int minVal;
+    private static double salary;
+
+    public static double getSum() {
+        return sum;
+    }
 
     /**
      * Ask user about update his sum and update it
      */
-    static void update() {
-        try (FileReader reader = new FileReader(path)) {
+    public static void update(double userSalary) {
+        try (FileReader reader = new FileReader(FileUtils.PATH)) {
             int i;
             StringBuilder str = new StringBuilder();
             while ((i = reader.read()) != -1)
                 str.append((char) i);
-            if (str.isEmpty()) {
-                Scanner sr = new Scanner(System.in);
-                System.out.println("Введите остаток");
-                sum = Double.parseDouble(sr.nextLine());
-                sr.close();
-                updateDay = currentDate;
-                updateDay.add(Calendar.DAY_OF_MONTH, -1);
-                rewrite();
-                System.out.println("Остаток: " + sum);
-                return;
-            }
             String[] tmp = str.toString().split(" ");
             sum = Double.parseDouble(tmp[0]);
             updateDay = parseDate(tmp[1].trim());
+            percent = Double.parseDouble(tmp[2]);
+            minVal = Integer.parseInt(tmp[3]);
+            salary = userSalary;
+            //salary = Double.parseDouble(tmp[4]);
             if (currentDate.after(updateDay)) {
                 add();
                 rewrite();
@@ -59,40 +62,48 @@ public class Finans {
         }
     }
 
-    /**
-     * Read sum from file and show it to user
-     */
-    static void show() {
-        try (FileReader reader = new FileReader(path)) {
+    public static boolean checkUpdate() {
+        boolean check = false;
+        try (FileReader reader = new FileReader(FileUtils.PATH)) {
             int i;
             StringBuilder str = new StringBuilder();
             while ((i = reader.read()) != -1)
                 str.append((char) i);
-            if (str.isEmpty())
-                askUpdate();
-            else {
-                var tmp = str.toString().split(" ");
-                sum = Double.parseDouble(tmp[0]);
-                updateDay = Calendar.getInstance();
-                updateDay.setTime(sdf.parse(tmp[1]));
-                if (currentDate.before(updateDay))
-                    System.out.println("Остаток: " + sum);
-                else
-                    askUpdate();
-            }
+            updateDay = parseDate(str.toString().split(" ")[1]);
+            if (currentDate.after(updateDay))
+                check = true;
+        } catch (Exception ex) {
+            System.out.println("checkUpdate " + ex.getMessage());
+        }
+        return check;
+    }
+
+    /**
+     * Read sum from file
+     */
+    public static void read() {
+        try (FileReader reader = new FileReader(FileUtils.PATH)) {
+            int i;
+            StringBuilder str = new StringBuilder();
+            while ((i = reader.read()) != -1)
+                str.append((char) i);
+            String[] tmp = str.toString().split(" ");
+            sum = Double.parseDouble(tmp[0]);
+            updateDay = Calendar.getInstance();
+            updateDay.setTime(sdf.parse(tmp[1]));
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("read " + e);
         }
     }
 
     /**
-     * Ask user about update. If "yes" call {@link #update()}
+     * Ask user about update. If "yes" call {@link #update}
      */
     private static void askUpdate() {
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Остаток не обновлялся в этом месяце, обновить?\nY/N");
             switch (scanner.next().trim()) {
-                case "Y" -> update();
+                //case "Y" -> update();
                 case "N" -> System.out.println("Остаток: " + sum);
             }
         }
@@ -105,39 +116,43 @@ public class Finans {
     }
 
     /**
-     * Clear file then write new sum in file and date of new update separated by space. Date format: dd.MM.yyyy
+     * Clear file then write new sum, percent and minimum value to add in file and date of new update separated by space. Date format: dd.MM.yyyy
      */
     private static void rewrite() {
         clear();
-        try (FileWriter writer = new FileWriter(path, false)) {
-            // Записать новую sum в файл и через пробел добавить 0 (если сумма не обновлялась в этом месяце)
-            // или 1 (если сумма обновлялась) и дату следующего обновления
+        try (FileWriter writer = new FileWriter(FileUtils.PATH, false)) {
             writer.write(Double.toString(sum));
             writer.write(' ');
             writer.write(sdf.format(updateDay.getTime()));
+            writer.write(' ');
+            writer.write(Double.toString(percent));
+            writer.write(' ');
+            writer.write(String.valueOf(minVal));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    //TODO: Протестировать добавление
     /**
-     * Add 10% of salary to the sum. If 10% is less than 1000 c.u. then add 1000 c.u.
+     * Add user's {@link #percent} of salary to the sum. If percentage of salary is less than user's
+     * {@link #minVal minimum value} to add then add user's minimum value
      */
     private static void add() {
-        try (Scanner sc = new Scanner(System.in)){
-            System.out.println("Введите зп за месяц");
-            double salary = Double.parseDouble(sc.nextLine().trim());
-            sum += salary * 0.1 >= 1000 ? salary * 0.1 : 1000;
+        //try (Scanner sc = new Scanner(System.in)){
+            //System.out.println("Введите зп за месяц");
+            //double salary = Double.parseDouble(sc.nextLine().trim());
+            sum += salary * percent >= minVal ? salary * percent : minVal;
             updateDay.add(Calendar.MONTH, 1);
             updateDay.set(Calendar.DAY_OF_MONTH, 25);
             if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
                 updateDay.add(Calendar.DAY_OF_MONTH, -1);
             else if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
                 updateDay.add(Calendar.DAY_OF_MONTH, -2);
-        }
-        catch (NumberFormatException e) {
+        //}
+/*        catch (NumberFormatException e) {
             System.out.println(e + "\nВведено неверное значение");
-        }
+        }*/
     }
 
     /**
@@ -145,7 +160,7 @@ public class Finans {
      */
     private static void clear() {
         try {
-            new FileWriter(path, false).close(); //Очищает файл
+            new FileWriter(FileUtils.PATH, false).close(); //Очищает файл
         } catch (IOException e) {
             System.out.println(e.toString());
             throw new RuntimeException(e);
