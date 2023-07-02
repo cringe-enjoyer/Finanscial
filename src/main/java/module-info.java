@@ -7,4 +7,6 @@ module com.example.fin {
 
     opens com.example.fin to javafx.fxml;
     exports com.example.fin;
+    exports com.example.fin.controllers;
+    opens com.example.fin.controllers to javafx.fxml;
 }
