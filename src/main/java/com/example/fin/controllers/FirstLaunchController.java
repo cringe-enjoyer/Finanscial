@@ -1,7 +1,8 @@
 package com.example.fin.controllers;
 
 import com.example.fin.MainApplication;
-import com.example.fin.utils.FileUtils;
+import com.example.fin.Pillow;
+import com.example.fin.database.Sqlite;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,16 +11,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.controlsfx.dialog.ExceptionDialog;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class FirstLaunchController {
     private static final String regexNum = "\\d+[.|,]*\\d*";
-    private static final String regexDate = "[1-31]{1,2}";
+    private static final String regexDate = "^([12][0-9]|3[0-1]|0?[1-9])$";
     @FXML
     private TextField salaryText;
     @FXML
@@ -46,9 +44,12 @@ public class FirstLaunchController {
         String date = dateText.getText().replaceAll(" ", "");
         String minVal = minSumText.getText().replaceAll(" ", "");
         String startSum = startSumText.getText().replaceAll(" ", "");
-
         if (salary.matches(regexNum) && percent.matches(regexNum) && date.matches(regexDate)) {
-            saveData(salary, percent, date, minVal, startSum);
+            if (!saveData(salary, percent, date, minVal, startSum)) {
+                showEx("Ошибка сохранения");
+                return;
+            }
+
             //Switch to another screen
             try {
                 Stage stage = (Stage) okBtn.getScene().getWindow();
@@ -58,24 +59,28 @@ public class FirstLaunchController {
                 message = "Ошибка открытия приложения";
                 showEx(message);
             }
-        }
-        else {
+
+        } else {
             message = "Поля неверно заполнены";
             showEx(message);
         }
     }
 
-    //TODO: добавить сохранение зарплаты
     /**
-     * Save user's data in txt file
+     * Save user's data in database
      *
-     * @param salary user's salary
-     * @param percent percentage of the user's salary
-     * @param date user's pay day
-     * @param minVal minimum number for a pillow
+     * @param salary   user's salary
+     * @param percent  percentage of the user's salary
+     * @param date     user's pay day
+     * @param minVal   minimum number for a pillow
+     * @param startSum start pillow's sum
+     * @return true if user's data saved in database otherwise false
      */
-    private void saveData(String salary, String percent, String date, String minVal, String startSum) {
-        try (FileOutputStream writer = new FileOutputStream(new File(FileUtils.PATH))) {
+    private boolean saveData(String salary, String percent, String date, String minVal, String startSum) {
+        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent),
+                Integer.parseInt(minVal), Double.parseDouble(salary));
+        return Sqlite.addPillow(pillow);
+        /*try (FileOutputStream writer = new FileOutputStream(new File(FileUtils.PATH))) {
             if (!startSum.isEmpty())
                 writer.write((startSum + " ").getBytes());
             else
@@ -88,7 +93,7 @@ public class FirstLaunchController {
         } catch (Exception ex) {
             System.out.println("saveData " + ex);
             new ExceptionDialog(ex);
-        }
+        }*/
     }
 
     private String validateDate(String date) {
