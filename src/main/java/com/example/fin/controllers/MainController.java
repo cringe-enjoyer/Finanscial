@@ -18,12 +18,12 @@ public class MainController {
     @FXML
     protected void onReloadButtonClick() {
         if (Finans.checkUpdate()) {
-            TextInputDialog dialog = new TextInputDialog();
+            Finans.update();
+/*            TextInputDialog dialog = new TextInputDialog();
             dialog.setHeaderText("Введите зарплату");
             Optional<String> result = dialog.showAndWait();
-            result.ifPresent(salary -> Finans.update(Double.parseDouble(salary)));
+            result.ifPresent(salary -> Finans.updateSalary(Double.parseDouble(salary)));*/
         }
-        Finans.read();
         pillowResultText.setText(String.valueOf(Finans.getSum()));
     }
 }
