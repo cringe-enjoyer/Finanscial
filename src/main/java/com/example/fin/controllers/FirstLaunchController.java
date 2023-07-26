@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class FirstLaunchController {
     private static final String regexNum = "\\d+[.|,]*\\d*";
-    private static final String regexDate = "^([12][0-9]|3[0-1]|0?[1-9])$";
+    //private static final String regexDate = "^([12][0-9]|3[0-1]|0?[1-9])$";
     @FXML
     private TextField salaryText;
     @FXML
@@ -44,8 +44,8 @@ public class FirstLaunchController {
         String date = dateText.getText().replaceAll(" ", "");
         String minVal = minSumText.getText().replaceAll(" ", "");
         String startSum = startSumText.getText().replaceAll(" ", "");
-        if (salary.matches(regexNum) && percent.matches(regexNum) && date.matches(regexDate)) {
-            if (!saveData(salary, percent, date, minVal, startSum)) {
+        if (salary.matches(regexNum) && percent.matches(regexNum) && date.matches(regexNum)) {
+            if (!saveData(salary, percent, Integer.parseInt(date), minVal, startSum)) {
                 showEx("Ошибка сохранения");
                 return;
             }
@@ -76,8 +76,8 @@ public class FirstLaunchController {
      * @param startSum start pillow's sum
      * @return true if user's data saved in database otherwise false
      */
-    private boolean saveData(String salary, String percent, String date, String minVal, String startSum) {
-        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent),
+    private boolean saveData(String salary, String percent, int date, String minVal, String startSum) {
+        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent) / 100,
                 Integer.parseInt(minVal), Double.parseDouble(salary));
         return Sqlite.addPillow(pillow);
         /*try (FileOutputStream writer = new FileOutputStream(new File(FileUtils.PATH))) {

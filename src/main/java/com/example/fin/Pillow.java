@@ -58,9 +58,11 @@ public class Pillow {
         this.salary = salary;
     }
 
-    public Pillow(double sum, Calendar updateDay, double percent, int minVal, double salary) {
+    public Pillow(double sum, int updateDay, double percent, int minVal, double salary) {
         this.sum = sum;
-        this.updateDay = updateDay;
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.DAY_OF_MONTH, updateDay);
+        this.updateDay = date;
         this.percent = percent;
         this.minVal = minVal;
         this.salary = salary;
