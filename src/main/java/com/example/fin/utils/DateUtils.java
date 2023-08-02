@@ -13,6 +13,9 @@ public class DateUtils {
         return date;
     }
 
+    public static Calendar getLaterDate(Calendar date1, Calendar date2) {
+        return date1.after(date2) ? date1 : date2;
+    }
 
     /**
      * Convert date to string (dd.MM.yyyy)
