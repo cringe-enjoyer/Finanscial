@@ -77,7 +77,7 @@ public class FirstLaunchController {
      * @return true if user's data saved in database otherwise false
      */
     private boolean saveData(String salary, String percent, int date, String minVal, String startSum) {
-        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent) / 100,
+        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent),
                 Integer.parseInt(minVal), Double.parseDouble(salary));
         return Sqlite.addPillow(pillow);
         /*try (FileOutputStream writer = new FileOutputStream(new File(FileUtils.PATH))) {
