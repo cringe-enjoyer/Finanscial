@@ -2,7 +2,6 @@ package com.example.fin;
 
 import com.example.fin.utils.DateUtils;
 
-import java.text.ParseException;
 import java.util.Calendar;
 
 /**
@@ -62,8 +61,9 @@ public class Pillow {
         this.sum = sum;
         Calendar date = Calendar.getInstance();
         date.set(Calendar.DAY_OF_MONTH, updateDay);
+        //TODO: спрашивать у пользователя нужно ли обновить этот месяц, если текущая дата позже установленной пользователем
         this.updateDay = date;
-        this.percent = percent;
+        this.percent = percent / 100;
         this.minVal = minVal;
         this.salary = salary;
     }
