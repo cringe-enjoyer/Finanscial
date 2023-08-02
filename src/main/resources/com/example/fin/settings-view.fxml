@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="784.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fin.controllers.SettingsController">
+   <children>
+      <Label layoutX="241.0" layoutY="49.0" text="Зарплата">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="salaryText" layoutX="230.0" layoutY="75.0" prefHeight="32.0" prefWidth="325.0">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </TextField>
+      <Label layoutX="241.0" layoutY="123.0" text="Процент от зарплаты*">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="percentText" layoutX="230.0" layoutY="149.0" prefHeight="32.0" prefWidth="325.0">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </TextField>
+      <Label layoutX="241.0" layoutY="202.0" text="День обновления суммы*">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="dateText" layoutX="230.0" layoutY="228.0" prefHeight="32.0" prefWidth="325.0">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </TextField>
+      <Label layoutX="241.0" layoutY="281.0" text="Минимальная сумма*">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="minSumText" layoutX="230.0" layoutY="307.0" prefHeight="32.0" prefWidth="325.0">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </TextField>
+      <Label layoutX="241.0" layoutY="369.0" text="Сумма подушки">
+         <font>
+            <Font name="Arial" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="pillowSumText" layoutX="230.0" layoutY="395.0" prefHeight="32.0" prefWidth="325.0">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </TextField>
+      <Button fx:id="saveBtn" layoutX="245.0" layoutY="453.0" mnemonicParsing="false" onAction="#onSaveClick" prefHeight="32.0" prefWidth="96.0" text="Сохранить">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="cancelBtn" layoutX="425.0" layoutY="453.0" mnemonicParsing="false" onAction="#onCancelClick" prefHeight="32.0" prefWidth="96.0" text="Отмена">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
