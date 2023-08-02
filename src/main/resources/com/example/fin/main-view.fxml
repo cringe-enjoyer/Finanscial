@@ -14,5 +14,10 @@
          <font>
             <Font name="Arial" size="14.0" />
          </font></Button>
+      <Button fx:id="settingsBtn" layoutX="20.0" layoutY="22.0" mnemonicParsing="false" onAction="#onSettingsBtnClick" text="Настройки">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
