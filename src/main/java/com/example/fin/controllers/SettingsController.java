@@ -49,10 +49,17 @@ public class SettingsController {
 
     @FXML
     protected void onSaveClick(ActionEvent actionEvent) {
-        Pillow pillow = new Pillow(Double.parseDouble(pillowSumText.getText()), dateText.getText(),
+        Pillow pillow = new Pillow(Double.parseDouble(pillowSumText.getText()), Integer.parseInt(dateText.getText()),
                 Double.parseDouble(percentText.getText()), Integer.parseInt(minSumText.getText()),
                 Double.parseDouble(salaryText.getText()));
         Sqlite.updatePillow(pillow);
+        try {
+            Stage stage = (Stage) cancelBtn.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
     }
 
     @FXML
