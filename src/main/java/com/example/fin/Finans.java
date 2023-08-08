@@ -39,6 +39,16 @@ public class Finans {
     }
 
     /**
+     * Save user's pillow in database
+     *
+     * @param pillow user's financial pillow
+     * @return true if user's pillow added to the database otherwise false
+     */
+    public static boolean savePillow(Pillow pillow) {
+        return Sqlite.addPillow(pillow);
+    }
+
+    /**
      * Ask user about update. If "yes" call {@link #update}
      */
     private static void askUpdate() {
@@ -62,11 +72,11 @@ public class Finans {
         pillow.setSum(sum);
         Calendar updateDay = pillow.getUpdateDay();
         updateDay.add(Calendar.MONTH, 1);
-        updateDay.set(Calendar.DAY_OF_MONTH, 25);
-        if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+        updateDay.set(Calendar.DAY_OF_MONTH, pillow.getUpdateDay().get(Calendar.DAY_OF_MONTH));
+/*        if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
             updateDay.add(Calendar.DAY_OF_MONTH, -1);
         else if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-            updateDay.add(Calendar.DAY_OF_MONTH, -2);
+            updateDay.add(Calendar.DAY_OF_MONTH, -2);*/
         pillow.setUpdateDay(updateDay);
     }
 }

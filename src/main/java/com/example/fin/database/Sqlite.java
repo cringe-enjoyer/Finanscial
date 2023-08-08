@@ -10,6 +10,12 @@ public class Sqlite {
         return DriverManager.getConnection("jdbc:sqlite:src/main/resources/finanscial.sqlite");
     }
 
+    /**
+     * Save user's pillow in database
+     *
+     * @param pillow user's financial pillow
+     * @return true if pillow added to the database otherwise false
+     */
     public static boolean addPillow(Pillow pillow) {
         try {
             Connection connection = getConnection();

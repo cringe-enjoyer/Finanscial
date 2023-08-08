@@ -1,19 +1,17 @@
 package com.example.fin.controllers;
 
+import com.example.fin.Finans;
 import com.example.fin.MainApplication;
 import com.example.fin.Pillow;
-import com.example.fin.database.Sqlite;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Optional;
 
 public class FirstLaunchController {
     private static final String regexNum = "\\d+[.|,]*\\d*";
@@ -27,7 +25,7 @@ public class FirstLaunchController {
     @FXML
     private TextField minSumText;
     @FXML
-    TextField startSumText;
+    private TextField startSumText;
     @FXML
     private Button okBtn;
 
@@ -45,7 +43,10 @@ public class FirstLaunchController {
         String minVal = minSumText.getText().replaceAll(" ", "");
         String startSum = startSumText.getText().replaceAll(" ", "");
         if (salary.matches(regexNum) && percent.matches(regexNum) && date.matches(regexNum)) {
-            if (!saveData(salary, percent, Integer.parseInt(date), minVal, startSum)) {
+            Pillow pillow = new Pillow(Double.parseDouble(startSum), Integer.parseInt(date), Double.parseDouble(percent),
+                    Integer.parseInt(minVal), Double.parseDouble(salary));
+            pillow.setUpdateDay(validateDate(Integer.parseInt(date)));
+            if (!Finans.savePillow(pillow)) {
                 showEx("Ошибка сохранения");
                 return;
             }
@@ -66,46 +67,28 @@ public class FirstLaunchController {
         }
     }
 
-    /**
-     * Save user's data in database
-     *
-     * @param salary   user's salary
-     * @param percent  percentage of the user's salary
-     * @param date     user's pay day
-     * @param minVal   minimum number for a pillow
-     * @param startSum start pillow's sum
-     * @return true if user's data saved in database otherwise false
-     */
-    private boolean saveData(String salary, String percent, int date, String minVal, String startSum) {
-        Pillow pillow = new Pillow(Double.parseDouble(startSum), date, Double.parseDouble(percent),
-                Integer.parseInt(minVal), Double.parseDouble(salary));
-        return Sqlite.addPillow(pillow);
-        /*try (FileOutputStream writer = new FileOutputStream(new File(FileUtils.PATH))) {
-            if (!startSum.isEmpty())
-                writer.write((startSum + " ").getBytes());
-            else
-                writer.write("0 ".getBytes());
-            date = validateDate(date);
-            writer.write((date + " ").getBytes());
-            writer.write((percent + " ").getBytes());
-            writer.write(minVal.getBytes());
-            //writer.write((salary + " ").getBytes());
-        } catch (Exception ex) {
-            System.out.println("saveData " + ex);
-            new ExceptionDialog(ex);
-        }*/
-    }
-
-    private String validateDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    private Calendar validateDate(int date) {
         Calendar today = Calendar.getInstance();
         Calendar payDay = Calendar.getInstance();
-        payDay.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date));
-        if (today.before(payDay))
-            return sdf.format(payDay.getTime());
-        // TODO: Может убрать это и оставить только для текущего месяца
+        payDay.set(Calendar.DAY_OF_MONTH, date);
+        if (today.after(payDay)) {
+            Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+            ButtonType yes = new ButtonType("Да");
+            ButtonType no = new ButtonType("Нет");
+            dialog.getButtonTypes().setAll(yes, no);
+            dialog.setTitle("Обновить подушку");
+            dialog.setHeaderText("Обновить подушку за этот месяц");
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.get() == yes)
+                return payDay;
+            else {
+                int newMonth = payDay.get(Calendar.MONTH) + 1;
+                payDay.set(Calendar.MONTH, newMonth > 11 ? 0 : newMonth);
+                return payDay;
+            }
+        }
         payDay.add(Calendar.MONTH, 1);
-        return sdf.format(payDay);
+        return payDay;
     }
 
     /**
