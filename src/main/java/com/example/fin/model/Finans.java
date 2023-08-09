@@ -19,7 +19,8 @@ public class Finans {
         if (pillow == null)
             return false;
 
-        if (checkUpdate()) {
+        //Increase sum for all needed months
+        while (checkUpdate()) {
             add(pillow);
             Sqlite.updatePillow(pillow);
         }
