@@ -17,14 +17,12 @@ public class Sqlite {
      * @return true if pillow added to the database otherwise false
      */
     public static boolean addPillow(Pillow pillow) {
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             statement.setQueryTimeout(30);
             statement.executeUpdate("INSERT INTO user_data (salary, sum, percent, update_date, min_value) VALUES" +
                     "(" + pillow.getSalary() + ", " + pillow.getSum() + ", " + pillow.getPercent() + ", '"
                     + DateUtils.dateToString(pillow.getUpdateDay()) + "', " + pillow.getMinVal() + ");");
-            connection.close();
         } catch (Exception exception) {
             System.out.println(exception);
             return false;
@@ -33,31 +31,27 @@ public class Sqlite {
     }
 
     public static Pillow getPillow() {
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
+        Pillow pillow = null;
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             statement.setQueryTimeout(30);
             ResultSet result = statement.executeQuery("SELECT * from user_data");
-            Pillow pillow = null;
             if (result.next()) {
                 pillow = new Pillow(result.getDouble("sum"), result.getString("update_date"),
                         result.getDouble("percent"), result.getInt("min_value"),
                         result.getDouble("salary"));
             }
-            statement.close();
-            connection.close();
-            return pillow;
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
             exception.printStackTrace();
             return null;
         }
+        return pillow;
     }
 
     public static void updatePillow(Pillow pillow) {
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             statement.setQueryTimeout(30);
             statement.executeUpdate("UPDATE user_data SET salary = " + pillow.getSalary() + ", sum = "
                     + pillow.getSum() + ", percent = " + pillow.getPercent() + ", update_date = '" +
@@ -68,8 +62,8 @@ public class Sqlite {
     }
 
     public static void checkDB() {
-        try (Connection connection = getConnection()) {
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT tbl_name FROM sqlite_master WHERE tbl_name LIKE 'user_data';");
             if (resultSet.next()) {
                 if (resultSet.getString("tbl_name").equals("user_data"))
@@ -82,9 +76,8 @@ public class Sqlite {
     }
 
     private static void createDB() {
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             statement.executeQuery("create table user_data ( " +
                     "    id          INTEGER" +
                     "        constraint user_data_pk" +
