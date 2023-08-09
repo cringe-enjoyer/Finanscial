@@ -1,4 +1,4 @@
-package com.example.fin;
+package com.example.fin.model;
 
 import com.example.fin.utils.DateUtils;
 

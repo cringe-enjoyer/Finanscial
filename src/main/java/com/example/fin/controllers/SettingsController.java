@@ -1,7 +1,7 @@
 package com.example.fin.controllers;
 
 import com.example.fin.MainApplication;
-import com.example.fin.Pillow;
+import com.example.fin.model.Pillow;
 import com.example.fin.database.Sqlite;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

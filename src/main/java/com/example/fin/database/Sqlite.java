@@ -1,6 +1,6 @@
 package com.example.fin.database;
 
-import com.example.fin.Pillow;
+import com.example.fin.model.Pillow;
 import com.example.fin.utils.DateUtils;
 
 import java.sql.*;

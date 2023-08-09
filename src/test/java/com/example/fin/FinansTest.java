@@ -1,9 +1,9 @@
 package com.example.fin;
 
 import com.example.fin.database.Sqlite;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.fin.model.Finans;
+import com.example.fin.model.Pillow;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
