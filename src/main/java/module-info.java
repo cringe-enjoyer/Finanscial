@@ -11,4 +11,6 @@ module com.example.fin {
     exports com.example.fin;
     exports com.example.fin.controllers;
     opens com.example.fin.controllers to javafx.fxml;
+    exports com.example.fin.model;
+    opens com.example.fin.model to javafx.fxml;
 }
