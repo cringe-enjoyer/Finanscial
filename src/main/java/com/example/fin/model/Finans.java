@@ -20,7 +20,10 @@ public class Finans {
 
         //Increase sum for all needed months
         while (checkUpdate()) {
+            Cushion cushion = new Cushion(userData.getCushion().getUpdateDate());
             add(userData);
+            cushion.setSum(userData.getCushion().getSum());
+            Sqlite.addOldCushion(cushion);
             Sqlite.updateUserData(userData);
         }
         return true;

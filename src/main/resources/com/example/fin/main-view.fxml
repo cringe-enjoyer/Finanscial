@@ -20,5 +20,13 @@
             <Font name="Arial" size="14.0" />
          </font>
       </Button>
+      <LineChart fx:id="lineChart" layoutX="62.0" layoutY="58.0" prefHeight="229.0" prefWidth="425.0" title="График подушки">
+        <xAxis>
+          <CategoryAxis animated="false" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
    </children>
 </AnchorPane>

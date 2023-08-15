@@ -71,16 +71,64 @@ public class Sqlite {
     public static void checkDB() {
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT tbl_name FROM sqlite_master WHERE tbl_name " + "LIKE 'user_data'");
+            ResultSet resultSet = statement.executeQuery("SELECT tbl_name FROM sqlite_master WHERE tbl_name " +
+                    "LIKE 'user_data' OR tbl_name LIKE 'old_cushions';");
             StringBuilder checkResult = new StringBuilder();
             while (resultSet.next()) {
                 checkResult.append(resultSet.getString("tbl_name")).append(" ");
 /*                if (resultSet.getString("tbl_name").equals("user_data"))
                     return;*/
             }
+            if (checkResult.toString().trim().equals("user_data old_cushions"))
+                return;
             createDB();
         } catch (Exception ex) {
             System.err.println(ex);
+        }
+    }
+
+    public static boolean addOldCushion(Cushion cushion) {
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.setQueryTimeout(30);
+            statement.executeUpdate("INSERT INTO old_cushions (sum, date) VALUES" +
+                    "(" + cushion.getSum() + ", '" + DateUtils.dateToString(cushion.getUpdateDate()) + "' );");
+        } catch (Exception exception) {
+            System.out.println(exception);
+            return false;
+        }
+        return true;
+    }
+
+    public static List<Cushion> getOldCushions() {
+        List<Cushion> cushions = new ArrayList<>();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
+            ResultSet result = statement.executeQuery("SELECT * FROM old_cushions");
+            while (result.next()) {
+                cushions.add(new Cushion(result.getDouble("sum"), DateUtils.stringToDate(result.getString("date"))));
+            }
+            return cushions;
+        } catch (SQLException e) {
+            return null;
+            //throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Map<String, Double> getOldCushionsAsMap() {
+        Map<String, Double> oldPillows = new HashMap<>();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
+            ResultSet result = statement.executeQuery("SELECT * FROM old_cushions");
+            while (result.next()) {
+                oldPillows.put(result.getString("date"), result.getDouble("sum"));
+            }
+            return oldPillows;
+        } catch (SQLException e) {
+            return null;
+            //throw new RuntimeException(e);
         }
     }
 
@@ -95,7 +143,14 @@ public class Sqlite {
                     "    sum         REAL," +
                     "    percent     REAL," +
                     "    update_date TEXT," +
-                    "    min_value   INTEGER);");
+                    "    min_value   INTEGER);" +
+                    "create table old_cushions ( " +
+                    "    id   integer        not null" +
+                    "        constraint old_cushions_pk" +
+                    "            primary key autoincrement," +
+                    "    sum  REAL default 0 not null," +
+                    "    date TEXT" +
+                    ");");
         } catch (Exception exception) {
 
         }

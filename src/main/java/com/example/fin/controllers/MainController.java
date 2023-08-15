@@ -4,10 +4,12 @@ import com.example.fin.model.Cushion;
 import com.example.fin.model.Finans;
 import com.example.fin.MainApplication;
 import com.example.fin.database.Sqlite;
+import com.example.fin.model.CushionChart;
 import com.example.fin.model.UserData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -15,6 +17,8 @@ import javafx.stage.Stage;
 import java.util.Calendar;
 
 public class MainController {
+    @FXML
+    private LineChart<String, Number> lineChart;
     @FXML
     private Button settingsBtn;
     @FXML
@@ -46,9 +50,11 @@ public class MainController {
 
     @FXML
     protected void onReloadButtonClick() {
+        lineChart.setVisible(true);
         if (Finans.checkUpdate())
             Finans.update();
-
+        CushionChart cushionChart = new CushionChart(lineChart);
+        cushionChart.updateData();
         Cushion cushion = Finans.getUserData().getCushion();
         cushionResultText.setText(String.valueOf(cushion.getSum()));
     }
