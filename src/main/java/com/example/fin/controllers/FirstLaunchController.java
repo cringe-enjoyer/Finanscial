@@ -1,8 +1,9 @@
 package com.example.fin.controllers;
 
+import com.example.fin.model.Cushion;
 import com.example.fin.model.Finans;
 import com.example.fin.MainApplication;
-import com.example.fin.model.Pillow;
+import com.example.fin.model.UserData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,10 +44,11 @@ public class FirstLaunchController {
         String minVal = minSumText.getText().replaceAll(" ", "");
         String startSum = startSumText.getText().replaceAll(" ", "");
         if (salary.matches(regexNum) && percent.matches(regexNum) && date.matches(regexNum)) {
-            Pillow pillow = new Pillow(Double.parseDouble(startSum), Integer.parseInt(date), Double.parseDouble(percent),
-                    Integer.parseInt(minVal), Double.parseDouble(salary));
-            pillow.setUpdateDay(validateDate(Integer.parseInt(date)));
-            if (!Finans.savePillow(pillow)) {
+            Cushion cushion = new Cushion(Double.parseDouble(startSum), Integer.parseInt(date));
+            UserData userData = new UserData(cushion, Double.parseDouble(percent), Integer.parseInt(minVal),
+                    Double.parseDouble(salary));
+            cushion.setUpdateDate(validateDate(Integer.parseInt(date)));
+            if (!Finans.saveUserData(userData)) {
                 showEx("Ошибка сохранения");
                 return;
             }
