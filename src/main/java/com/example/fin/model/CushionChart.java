@@ -2,7 +2,13 @@ package com.example.fin.model;
 
 import com.example.fin.database.Sqlite;
 import com.example.fin.utils.DateUtils;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.chart.*;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 import java.util.List;
 
@@ -26,8 +32,45 @@ public class CushionChart {
         List<Cushion> cushions = Sqlite.getOldCushions();
 
         if (cushions != null) {
-            for (Cushion cushion : cushions)
-                data.getData().add(new XYChart.Data<>(DateUtils.dateToString(cushion.getUpdateDate()), cushion.getSum()));
+            for (Cushion cushion : cushions) {
+                XYChart.Data node = new XYChart.Data(DateUtils.dateToString(cushion.getUpdateDate()), cushion.getSum());
+                node.setNode(new HoveredThresholdNode(cushion.getSum()));
+                data.getData().add(node);
+            }
+        }
+    }
+
+    //https://gist.github.com/jewelsea/4681797
+    class HoveredThresholdNode extends StackPane {
+        HoveredThresholdNode(double value) {
+            setPrefSize(10, 10);
+
+            final Label label = createDataThresholdLabel(value);
+
+            setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    getChildren().setAll(label);
+                    setCursor(Cursor.NONE);
+                    toFront();
+                }
+            });
+            setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    getChildren().clear();
+                    setCursor(Cursor.CROSSHAIR);
+                }
+            });
+        }
+
+        private Label createDataThresholdLabel(double value) {
+            final Label label = new Label(value + "");
+            label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+            label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+            label.setTextFill(Color.BLACK);
+            label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
+            return label;
         }
     }
 }
