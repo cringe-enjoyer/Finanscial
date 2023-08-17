@@ -11,7 +11,7 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        if (checkPillow()) {
+        if (checkCushion()) {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("firstLaunch-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle("Financial pillow");
@@ -27,9 +27,9 @@ public class MainApplication extends Application {
         }
     }
 
-    private boolean checkPillow() {
+    private boolean checkCushion() {
         Sqlite.checkDB();
-        return Sqlite.getPillow() == null;
+        return Sqlite.getUserData() == null;
     }
 
     public static void main(String[] args) {

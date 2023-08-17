@@ -1,8 +1,9 @@
 package com.example.fin.controllers;
 
 import com.example.fin.MainApplication;
-import com.example.fin.model.Pillow;
 import com.example.fin.database.Sqlite;
+import com.example.fin.model.Cushion;
+import com.example.fin.model.UserData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +22,7 @@ public class SettingsController {
     @FXML
     private TextField minSumText;
     @FXML
-    private TextField pillowSumText;
+    private TextField cushionSumText;
     @FXML
     private Button saveBtn;
     @FXML
@@ -44,15 +45,15 @@ public class SettingsController {
     }
 
     public void setPillowSumText(String pillowSumText) {
-        this.pillowSumText.setText(pillowSumText);
+        this.cushionSumText.setText(pillowSumText);
     }
 
     @FXML
     protected void onSaveClick(ActionEvent actionEvent) {
-        Pillow pillow = new Pillow(Double.parseDouble(pillowSumText.getText()), Integer.parseInt(dateText.getText()),
-                Double.parseDouble(percentText.getText()), Integer.parseInt(minSumText.getText()),
-                Double.parseDouble(salaryText.getText()));
-        Sqlite.updatePillow(pillow);
+        Cushion cushion = new Cushion(Double.parseDouble(cushionSumText.getText()), Integer.parseInt(dateText.getText()));
+        UserData userData = new UserData(cushion, Double.parseDouble(percentText.getText()),
+                Integer.parseInt(minSumText.getText()), Double.parseDouble(salaryText.getText()));
+        Sqlite.updateUserData(userData);
         try {
             Stage stage = (Stage) cancelBtn.getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));

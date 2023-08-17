@@ -3,81 +3,73 @@ package com.example.fin.model;
 import com.example.fin.database.Sqlite;
 
 import java.util.Calendar;
-import java.util.Scanner;
 
 public class Finans {
-    public static double getSum() {
-        Pillow pillow = Sqlite.getPillow();
-        return pillow == null ? 0 : pillow.getSum();
+    public static UserData getUserData() {
+        UserData userData = Sqlite.getUserData();
+        return userData;
     }
 
     /**
-     * Update user's sum
+     * Update user data
      */
     public static boolean update() {
-        Pillow pillow = Sqlite.getPillow();
-        if (pillow == null)
+        UserData userData = Sqlite.getUserData();
+        if (userData == null)
             return false;
 
         //Increase sum for all needed months
         while (checkUpdate()) {
-            add(pillow);
-            Sqlite.updatePillow(pillow);
+            Cushion cushion = new Cushion(userData.getCushion().getUpdateDate());
+            add(userData);
+            cushion.setSum(userData.getCushion().getSum());
+            Sqlite.addOldCushion(cushion);
+            Sqlite.updateUserData(userData);
         }
         return true;
     }
 
     public static boolean checkUpdate() {
         boolean check = false;
-        Pillow pillow = Sqlite.getPillow();
-        if (pillow == null)
+        UserData userData = Sqlite.getUserData();
+        if (userData == null)
             return false;
+        Cushion cushion = userData.getCushion();
         Calendar currentDate = Calendar.getInstance();
-        if (currentDate.after(pillow.getUpdateDay()) ||
-                currentDate.get(Calendar.DAY_OF_MONTH) == pillow.getUpdateDay().get(Calendar.DAY_OF_MONTH))
+        if (currentDate.after(cushion.getUpdateDate()) ||
+                currentDate.get(Calendar.DAY_OF_MONTH) == cushion.getUpdateDate().get(Calendar.DAY_OF_MONTH))
             check = true;
         return check;
     }
 
     /**
-     * Save user's pillow in database
+     * Save user data in database
      *
-     * @param pillow user's financial pillow
-     * @return true if user's pillow added to the database otherwise false
+     * @param userData user data
+     * @return true if user data added to the database otherwise false
      */
-    public static boolean savePillow(Pillow pillow) {
-        return Sqlite.addPillow(pillow);
-    }
-
-    /**
-     * Ask user about update. If "yes" call {@link #update}
-     */
-    private static void askUpdate() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Остаток не обновлялся в этом месяце, обновить?\nY/N");
-            switch (scanner.next().trim()) {
-                //case "Y" -> update();
-                case "N" -> System.out.println("Остаток: ");
-            }
-        }
+    public static boolean saveUserData(UserData userData) {
+        return Sqlite.addUserData(userData);
     }
 
     /**
      * Add user's percent of salary to the sum. If percentage of salary is less than user's
      * minimum value to add then add user's minimum value
      */
-    private static void add(Pillow pillow) {
-        double sum = pillow.getSum() +
-                (pillow.getSalary() * pillow.getPercent() >= pillow.getMinVal() ?
-                        pillow.getSalary() * pillow.getPercent() : pillow.getMinVal());
-        pillow.setSum(sum);
-        Calendar updateDay = pillow.getUpdateDay();
+    private static void add(UserData userData) {
+        Cushion cushion = userData.getCushion();
+        double sum = cushion.getSum() +
+                (userData.getSalary() * userData.getPercent() >= userData.getMinVal() ?
+                        userData.getSalary() * userData.getPercent() : userData.getMinVal());
+        cushion.setSum(sum);
+        Calendar updateDay = cushion.getUpdateDate();
         updateDay.add(Calendar.MONTH, 1);
-        updateDay.set(Calendar.DAY_OF_MONTH, pillow.getUpdateDay().get(Calendar.DAY_OF_MONTH));
+        updateDay.set(Calendar.DAY_OF_MONTH, cushion.getUpdateDate().get(Calendar.DAY_OF_MONTH));
 /*        if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
             updateDay.add(Calendar.DAY_OF_MONTH, -1);
         else if (updateDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
             updateDay.add(Calendar.DAY_OF_MONTH, -2);*/
-        pillow.setUpdateDay(updateDay);
+        cushion.setUpdateDate(updateDay);
+        userData.setCushion(cushion);
     }
 }
