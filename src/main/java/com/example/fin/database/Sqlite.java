@@ -45,7 +45,7 @@ public class Sqlite {
             if (result.next()) {
                 Cushion cushion = new Cushion(result.getDouble("sum"),
                         DateUtils.stringToDate(result.getString("update_date")));
-                userData = new UserData(cushion, result.getDouble("percent"),
+                userData = new UserData(cushion, result.getDouble("percent") * 100,
                         result.getInt("min_value"), result.getDouble("salary"));
             }
         } catch (Exception exception) {
