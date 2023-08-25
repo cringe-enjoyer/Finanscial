@@ -1,6 +1,7 @@
 package com.example.fin.model;
 
 import com.example.fin.database.Sqlite;
+import com.example.fin.utils.DateUtils;
 
 import java.util.Calendar;
 
@@ -37,7 +38,7 @@ public class Finans {
         Cushion cushion = userData.getCushion();
         Calendar currentDate = Calendar.getInstance();
         if (currentDate.after(cushion.getUpdateDate()) ||
-                currentDate.get(Calendar.DAY_OF_MONTH) == cushion.getUpdateDate().get(Calendar.DAY_OF_MONTH))
+                DateUtils.dateToString(currentDate).equals(DateUtils.dateToString(cushion.getUpdateDate())))
             check = true;
         return check;
     }
