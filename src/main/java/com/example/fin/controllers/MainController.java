@@ -40,7 +40,7 @@ public class MainController {
             controller.setPercentText(String.valueOf(userData.getPercent() * 100));
             controller.setMinSumText(String.valueOf(userData.getMinVal()));
             controller.setSalaryText(String.valueOf(userData.getSalary()));
-            controller.setPillowSumText(String.valueOf(cushion.getSum()));
+            controller.setCushionSumText(String.valueOf(cushion.getSum()));
             controller.setDateText(String.valueOf(cushion.getUpdateDate().get(Calendar.DAY_OF_MONTH)));
         } catch (Exception ex) {
                 /*message = "Ошибка открытия приложения";

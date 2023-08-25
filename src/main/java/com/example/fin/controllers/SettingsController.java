@@ -44,8 +44,8 @@ public class SettingsController {
         this.minSumText.setText(minSumText);
     }
 
-    public void setPillowSumText(String pillowSumText) {
-        this.cushionSumText.setText(pillowSumText);
+    public void setCushionSumText(String cushionSumText) {
+        this.cushionSumText.setText(cushionSumText);
     }
 
     @FXML
